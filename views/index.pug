@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    title= title
+    script(src='https://www.paypalobjects.com/api/checkout.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    body
+      h2 #{mode} mode
+      form#simple-payment
+        div.input
+          span.label Payee email
+          input(type="text" name="payee" value=payee )
+          br
+        hr
+        div.input
+          input(type="text", name="qty", placeholder="Quantity")
+        div.input
+          input(type="textarea", name="contact" placeholder="Note to Payee")
+        br
+        #paypal-button
+      hr
+      script(src='/main.js')
