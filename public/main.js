@@ -39,5 +39,5 @@ $( () => {
   }, '#paypal-button');
 
   var socket = io.connect('/');
-  socket.on( 'webhook', (msg) => console.log( msg) );
+  socket.on('message', console.log );
  });

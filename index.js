@@ -19,7 +19,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const server = require('http').Server(app);
 const io = socketIO(server);
 
-
 // set up paypal sdk
 paypal.configure();
 
@@ -87,6 +86,7 @@ app.post( '/create-payment', (req, resp) => {
       resp.status(500);
       resp.json(err);
     } else {
+      io.emit('message', 'testing....');
       resp.json(payment);
     }
   });
@@ -106,7 +106,7 @@ app.post( '/execute-payment', (req, resp) => {
 });
 
 app.post( '/hook', (req, resp) => {
-  io.emit('webhook', req.body);
+  io.emit('message', req.body);
   resp.send('OK');
 });
 
