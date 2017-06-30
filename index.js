@@ -1,11 +1,13 @@
 const express = require( 'express' );
+const socketIO = require('socket.io');
 const paypal = require('paypal-rest-sdk');
-const logger = require('debug')('PAYPAL TEST');
+const logger = require('debug')('PAYPAL_TEST');
 const bodyParser = require('body-parser');
 
 // set up express
 const app = express();
-app.set('port', process.env.PORT || 3333);
+const port = process.env.PORT || 3333;
+app.set('port', port );
 app.set('view engine', 'pug');
 app.use(express.static(__dirname + '/public'));
 
@@ -13,12 +15,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
+// set up sockets
+const server = require('http').Server(app);
+const io = socketIO(server);
+
+
 // set up paypal sdk
 paypal.configure();
 
 const defaultPayee = 'jason.johnston@automattic.com';
 const paypalConfig = {
-  mode: 'live',
+  mode: 'sandbox',
   client_id: process.env.PAYPAL_CLIENT_ID,
   client_secret: process.env.PAYPAL_SECRET,
 };
@@ -39,7 +46,7 @@ function createPaymentPayload( formData = {} ) {
   // build item
   const item = {
     name: 'two tickets to paradise',
-    price: '.99',
+    price: '.01',
     currency: 'USD',
     quantity: formData.qty || 1,
   };
@@ -98,6 +105,11 @@ app.post( '/execute-payment', (req, resp) => {
   });
 });
 
+app.post( '/hook', (req, resp) => {
+  io.emit('webhook', req.body);
+  resp.send('OK');
+});
+
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Simple Payments Demo',
@@ -105,6 +117,8 @@ app.get('/', (req, res) => {
     payee: defaultPayee } );
 } );
 
-app.listen(app.get('port'),() => {
-  logger(`node app up and running on port ${app.get('port')}`);
-});
+server.listen(port);
+
+
+
+

@@ -4,6 +4,7 @@ html
     title= title
     script(src='https://www.paypalobjects.com/api/checkout.js')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='/socket.io.js')
     body
       h2 #{mode} mode
       form#simple-payment
@@ -19,4 +20,6 @@ html
         br
         #paypal-button
       hr
+      span PayPal Responses
+      #responses
       script(src='/main.js')
