@@ -23,10 +23,15 @@ const io = socketIO(server);
 paypal.configure();
 
 const defaultPayee = 'jason.johnston@automattic.com';
+const price = '.01';
+
 const paypalConfig = {
   mode: 'sandbox',
   client_id: process.env.PAYPAL_CLIENT_ID,
   client_secret: process.env.PAYPAL_SECRET,
+  headers: {
+    "PayPal-Partner-Attribution-Id" : "123123123"
+  }
 };
 paypal.configure( paypalConfig );
 
@@ -45,7 +50,7 @@ function createPaymentPayload( formData = {} ) {
   // build item
   const item = {
     name: 'two tickets to paradise',
-    price: '.01',
+    price,
     currency: 'USD',
     quantity: formData.qty || 1,
   };
@@ -60,7 +65,7 @@ function createPaymentPayload( formData = {} ) {
       allowed_payment_method: "INSTANT_FUNDING_SOURCE"
     },
     payee: {
-      email: formData.email || defaultPayee
+      email: formData.payee || defaultPayee
     },
     note_to_payee: formData.note_to_payee || '',
     item_list: {
@@ -86,7 +91,6 @@ app.post( '/create-payment', (req, resp) => {
       resp.status(500);
       resp.json(err);
     } else {
-      io.emit('message', 'testing....');
       resp.json(payment);
     }
   });
@@ -106,7 +110,7 @@ app.post( '/execute-payment', (req, resp) => {
 });
 
 app.post( '/hook', (req, resp) => {
-  io.emit('message', req.body);
+  io.emit('hook', req.body);
   resp.send('OK');
 });
 
@@ -114,6 +118,7 @@ app.get('/', (req, res) => {
   res.render('index', {
     title: 'Simple Payments Demo',
     mode:  paypalConfig.mode,
+    price: `${price} USD`,
     payee: defaultPayee } );
 } );
 

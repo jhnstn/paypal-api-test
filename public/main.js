@@ -6,9 +6,12 @@ $( () => {
   var responses = 0;
   function appendResponse( resp, step ) {
     var id = `response-${++responses}`;
+    var $step = $('<h3>')
+    $step.html( step );
+
     $('#responses')
       .append( $('<hr>'))
-      .append('<h1>').html( step )
+      .append( $step)
       .append( $(`<pre class="response" id="${id}">`).html(JSON.stringify(resp, null, 2)));
   }
 
@@ -39,5 +42,13 @@ $( () => {
   }, '#paypal-button');
 
   var socket = io.connect('/');
-  socket.on('message', console.log );
+  socket.on('hook', msg => console.log("%cPOST('/hook'):", "color:cyan", msg));
+ 
+  // global
+  // call this to see the request body to the /hook endpoint
+  debugHookEndpoint = ( echo ) => {
+    $.post('/hook', echo);
+  }
+
+  socket.on('debug', msg => console.log("%cSERVER debug message:", "color:cyan",msg));
  });

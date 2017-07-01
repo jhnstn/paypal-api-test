@@ -9,14 +9,16 @@ html
       h2 #{mode} mode
       form#simple-payment
         div.input
-          span.label Payee email
-          input(type="text" name="payee" value=payee )
+          span.label Pay 
+          input(type="text" name="payee" value=payee style="width:200px;" )
+          span   #{price} per item
           br
         hr
         div.input
           input(type="text", name="qty", placeholder="Quantity")
+        br
         div.input
-          input(type="textarea", name="contact" placeholder="Note to Payee")
+          input(type="textarea", name="contact" placeholder="Note to Payee (255 characters)" style="width:200px;height:100px;")
         br
         #paypal-button
       hr
